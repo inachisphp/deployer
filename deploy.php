@@ -9,14 +9,21 @@
 
 namespace Deployer;
 
+require 'recipe/common.php';
 require 'recipe/symfony.php';
 
-//host('prod')
-//    ->setHostname('example.com')
-//    ->setUser('deployer')
-//    ->set('deploy_path', '/var/www/app');
-
 require __DIR__ . '/deploy/tasks/requirements.php';
-//require __DIR__ . '/deploy/tasks.php';
+
+set('repository', 'git@github.com:inachisphp/inachis.git');
+set('keep_releases', 2);
+
+set('shared_files', [ '.env', '.env.local', ]);
+set('shared_dirs', [ 'public/imgs', 'var/{cache,log,sessions,uploads}', ]);
+set('writable_dirs', [ 'public/imgs', 'var/{cache,uploads}', ]);
+set('allow_anonymous_stats', false);
+
+
+import('inventory.yaml');
 
 before('deploy:prepare', 'requirements:check');
+after('deploy:failed', 'deploy:unlock');
